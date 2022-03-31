@@ -141,7 +141,7 @@ module.exports.createBook = createBook
 
     // if (!BookId)
     //     return res.status(400).send({ status: false, msg: "Please Provide BookId" })
-console.log(BookId)
+//console.log(BookId)
 
     let BookDetail = await bookModel.findOne({ _id: BookId})
     if (!BookDetail)
@@ -226,9 +226,9 @@ const updateBook = async function (req, res) {
             res.status(400).send({ status: false, msg: "releasedAt is required for updation" })
             return
         }
-        // if(!validator.isValidDate(reviewedAt)){
-        //     return res.status(400).send({ status: false, message: ' \"YYYY-MM-DD\" this Date format & only number format is accepted ' })
-        // }
+        if(!validator.isValidDate(releasedAt)){
+            return res.status(400).send({ status: false, message: ' \"YYYY-MM-DD\" this Date format & only number format is accepted ' })
+        }
 
         let findBook = await bookModel.findById(Id);
         if(!findBook){res.status(400).send({ status : false, msg : "bookId not present in db"})}
