@@ -109,18 +109,14 @@ module.exports.createBook = createBook
            }
            filter [ "subcategory"] = subcategory
        }
-     let bookdata = await bookModel.find(filter).select({ _id : 1,title : 1, excerpt :1, userId:1,category:1,releasedAt:1,reviews:1})
+     let bookdata = await bookModel.find(filter).select({ _id : 1,title : 1, excerpt :1, userId:1,category:1,releasedAt:1,reviews:1}).sort({title:1})
      console.log(bookdata)
      if(bookdata.length == 0){
          res.status(400).send({ status: false, msg : "book deatil not vaild"}) 
          return
      }
-     const bookDetail = bookdata.sort(function(a,b){
-         if(a.title<b.title) {return -1};
-         if(a.title>b.title)  {return 1};
-          return 0;
-         })
-        res.status(200).send({ status: true, msg: "successfully book deatail", data: bookDetail})
+
+        res.status(200).send({ status: true, msg: "successfully book deatail", data: bookdata})
         return
      }catch(error){
      res.status(500).send({status:false, msg:error.message})
@@ -139,9 +135,6 @@ module.exports.createBook = createBook
     let review = []
     let BookId = req.params.bookId
 
-    // if (!BookId)
-    //     return res.status(400).send({ status: false, msg: "Please Provide BookId" })
-//console.log(BookId)
 
     let BookDetail = await bookModel.findOne({ _id: BookId})
     if (!BookDetail)
@@ -274,3 +267,8 @@ const deleteBookById = async function (req, res) {
 
 }
 module.exports.deleteBookById = deleteBookById
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+

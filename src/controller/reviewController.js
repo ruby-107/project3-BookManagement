@@ -36,35 +36,28 @@ const createReview = async function (req, res) {
             res.status(400).send({ status: false, msg: "reviewed is required" })
             return
         }
+       
         if (!validator.isValidDate(reviewedAt)) {
             return res.status(400).send({ status: false, message: ' \"YYYY-MM-DD\" this Date format & only number format is accepted ' })
         }
 
-        if (!validator.isValidNumber1(rating)) {
-            res.status(400).send({ status: false, msg: "rating is required" })
-            return
-        }
+       if(rating){
         if (!([1, 2, 3, 4, 5].includes(Number(rating)))) {
             return res.status(400).send({ status: false, msg: "Rating should be from [1,2,3,4,5] this values" })
 
-        }
+        }}
         if (bookid != requestBody.bookId) { return res.status(400).send({ status: false, msg: "pathparam bookid and body bookid is diffrent" }) }
 
-
+       console.log(checkBookID)
         const savedData = await reviewModel.create(requestBody)
-        let reviewcount = 0
+        checkBookID.reviews = checkBookID.reviews+1
+        await checkBookID.save()
+        const data1 = checkBookID.toObject()
+        data1[ " reviewsData"] = savedData
+        
 
-        let getdata = await reviewModel.find().select({ review: 1, rating: 1, reviewedBy: 1, isDeleted: 1 })
-        console.log(getdata)
-        for (let i = 0; i < getdata.length; i++) {
-            if (getdata[i].isDeleted != true) {
-                reviewcount++
-            }
 
-        }
-        getdata.unshift({ reviewcount: reviewcount })
-
-        res.status(201).send({ status: true, data: getdata })
+        res.status(201).send({ status: true, data: data1 })
     }
 
     catch (err) {
@@ -122,7 +115,9 @@ const updateReview = async function (req, res) {
 
 
         let updatedReview = await reviewModel.findByIdAndUpdate({ _id: reviewId, isDeleted: false }, req.body, { new: true })
-        res.send(updatedReview)
+        const data1 = book.toObject()
+        data1[ " reviewsData"] = updatedReview
+        res.send(data1)
     } catch (err) {
         res.status(500).send({ status: false, msg: err.message });
     }
@@ -181,7 +176,7 @@ let deletereview = async function (req, res) {
             { isDeleted: true },
             { new: true }
         );
-        // if (!validator.isValidString(deleteReview)) {
+        
         res
             .status(200)
             .send({

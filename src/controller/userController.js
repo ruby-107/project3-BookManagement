@@ -4,9 +4,6 @@ const jwt = require('jsonwebtoken')
 
 
 
-
-
-
 const createUser = async function (req, res) {
     let requestBody = req.body
     try {
@@ -61,6 +58,13 @@ const createUser = async function (req, res) {
             res.status(400).send({ status: false, msg: `password is required` })
             return
         }
+        if(password.split("").length< 8){
+            res.status(400).send({ status:false, msg : `password length between 8 and 15 chrachter`})
+        }
+        if(password.split("").length> 15){
+            res.status(400).send({ status:false, msg : `password length between 8 and 15 chrachter`})
+        }
+        
         
         let user = await userModel.create(req.body)
         res.status(201).send({ status: true, data: user })
@@ -81,11 +85,6 @@ const login = async function (req, res) {
             return
         }
 
-
-        //   if(validator.isValidRequestBody(requestBody)){
-        //       res.status(400).send({ status: false, msg : `Invaild request parameter. please fill detail`})
-        //       return
-        //   }
 
         const { email, password } = requestBody
 
